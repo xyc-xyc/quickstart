@@ -1,103 +1,46 @@
 import { Component } from '@angular/core';
+import { NodeService } from './service/NodeService';
+import { TreeNode } from 'primeng/primeng';
 
 @Component({
-  selector: 'my-app',
-  template: `
+    selector: 'my-app',
+    template: `
 <p-treeTable [value]="files">
     <p-header>Basic</p-header>
     <p-column field="name" header="Name"></p-column>
     <p-column field="size" header="Size"></p-column>
     <p-column field="type" header="Type"></p-column>
 </p-treeTable>
+<button pButton type="button" label="Add" (click)="add()"></button>
+<button pButton type="button" label="Delete" (click)="delete()"></button>
+
 `,
+    providers: [NodeService]
 })
-export class AppComponent  { 
-    count  = 0; 
-    clk = () => {
-      this.count ++;
+export class AppComponent {
+
+    constructor(private nodeService: NodeService) { }
+
+    add() {
+        let newrow: TreeNode = <TreeNode>{
+            data: {
+                name: "Score",
+                size: "15kb",
+                type: "Document"
+            }
+        };
+
+        this.files.push(newrow)
     }
 
-    files = 
-    [  
-        {  
-            "data":{  
-                "name":"Documents",
-                "size":"75kb",
-                "type":"Folder"
-            },
-            "children":[
-                {  
-                    "data":{  
-                        "name":"Work",
-                        "size":"55kb",
-                        "type":"Folder"
-                    },
-                    "children":[  
-                        {  
-                            "data":{  
-                                "name":"Expenses.doc",
-                                "size":"30kb",
-                                "type":"Document"
-                            }
-                        },
-                        {  
-                            "data":{  
-                                "name":"Resume.doc",
-                                "size":"25kb",
-                                "type":"Resume"
-                            }
-                        }
-                    ]
-                },
-                {  
-                    "data":{  
-                        "name":"Home",
-                        "size":"20kb",
-                        "type":"Folder"
-                    },
-                    "children":[  
-                        {  
-                            "data":{  
-                                "name":"Invoices",
-                                "size":"20kb",
-                                "type":"Text"
-                            }
-                        }
-                    ]
-                }
-            ]
-        },
-        {  
-            "data":{  
-                "name":"Pictures",
-                "size":"150kb",
-                "type":"Folder"
-            },
-            "children":[  
-                {  
-                    "data":{  
-                        "name":"barcelona.jpg",
-                        "size":"90kb",
-                        "type":"Picture"
-                    }
-                },
-                {  
-                    "data":{  
-                        "name":"primeui.png",
-                        "size":"30kb",
-                        "type":"Picture"
-                    }
-                },
-                {  
-                    "data":{  
-                        "name":"optimus.jpg",
-                        "size":"30kb",
-                        "type":"Picture"
-                    }
-                }
-            ]
-        }
-    ]
+    delete() {
+        this.files.pop()
+    }
 
+    files: TreeNode[];
+
+    ngOnInit() {
+        this.nodeService.getFilesystem().subscribe(f => this.files = f);
+    }
 
 }
